@@ -1,23 +1,28 @@
-import logo from './logo.svg';
 import './App.css';
+import ReactDOM from "react-dom";
+import React, {useState} from 'react';
 
+import {ComposableMap, Geographies, Geography, Marker, Annotation, ZoomableGroup } from "react-simple-maps";
+import 'react-tooltip/dist/react-tooltip.css'
+
+
+const geoUrl = "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Mapa del mundo</h1>
+      <a className="my-anchor-element">◕‿‿◕</a>
+      <div style={{width: "1000px", border: "solid black", borderRadius: "3px"}}>
+      <ComposableMap data-tip="">
+        <Geographies geography={geoUrl}>
+          {({ geographies }) =>
+              geographies.map((geo) => (
+                <Geography key={geo.rsmKey} geography={geo} />
+              ))
+            }
+        </Geographies>
+      </ComposableMap>
+      </div>
     </div>
   );
 }
