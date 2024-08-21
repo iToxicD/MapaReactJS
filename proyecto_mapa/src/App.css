@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background-color: rgb(21, 64, 102);
+  background: linear-gradient(to bottom right, rgb(197, 103, 206), rgb(101, 11, 104));
 }
 
 .App-logo {
@@ -19,7 +19,9 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
-
+map{
+  background-color: aqua;
+}
 
 @keyframes App-logo-spin {
   from {
