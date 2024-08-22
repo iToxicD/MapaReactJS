@@ -14,15 +14,22 @@ const marcadores = [
     coordinates: [ -3.74922, 40.463667],
   }
 ];
-//const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
+
 function App() {
   const [contenido, setcontenido] = useState("");
   return (
     <div className="App">
-      <h1>Mapa del mundo</h1>
+      <div className="title">
+        <h1>World Map</h1>
+      </div>
+      
+      <div className="columna1">
+          <p>lorem  </p>
+      </div>
+      
       <Tooltip id='country-tooltip'/>
-      <a className="my-anchor-element">◕‿‿◕</a>
-      <div style={{width: "1400px", border: " 1px solid black", borderRadius: "3px"}}>
+
+      <div className="marco">
       <ComposableMap className="map" data-tip="">
         <ZoomableGroup>
           <Geographies geography="/features.json">
@@ -34,31 +41,35 @@ function App() {
                   onMouseEnter={() => {
                     const{NAME} = geo.properties;
                     setcontenido(`${NAME}`);
-                  }}onMouseLeave={() => {setcontenido("");
-
                   }}
+                  onMouseLeave={() => {setcontenido("");}}
                   style={{
                     hover: {
-                      fill: "#F53",
+                      fill: "#62e55f",
                       outline: "none",
                     }
                   }}
                   />
                 ))
               }
-          </Geographies>
-                        
-          {marcadores.map(({ name, coordinates, markerOffset}) => (
+          </Geographies>     
+                {marcadores.map(({ name, coordinates, markerOffset}) => (
                   <Marker key ={name} coordinates={coordinates} >
-                    <circle r={5} fill='#F00' stroke='#fff' strokeWidth={2}/>
+                    <circle r={3} fill='#F00' stroke='#fff' strokeWidth={1}/>
                     <text textAnchor='middle' y={markerOffset} style={{fontFamily: "system-ui", fill: "#06a7fe"}}>
                       {name}
                     </text>
                   </Marker>
                 ))}
         </ZoomableGroup>
+        
       </ComposableMap>
+        
       </div> 
+      <div className="texto">
+          <p>Gracias por visitar este proyecto realizado con ReactJS, si quieres ver otros proyectos en los que he participado haz click en el botón de abajo.</p>
+          <a href="https://github.com/iToxicD">Saber más</a>
+      </div>
     </div>
   );
 }
