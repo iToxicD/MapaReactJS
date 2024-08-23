@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.css';
 import { Tooltip } from 'react-tooltip'; 
+import axios from 'axios';
 
 import {ComposableMap, Geographies, Geography, Marker, Annotation, ZoomableGroup } from "react-simple-maps";
 //import 'react-tooltip/dist/react-tooltip.css'
@@ -16,9 +17,26 @@ const marcadores = [
 function App() {
   const [contenido, setcontenido] = useState("");
   const [paisSeleccionado, setPaisSeleccionado] = useState(null);
-
+  const [loading, setLoading] = useState(false); 
+  const obtenerInformacionPais = async (nombrePais) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`https://restcountries.com/v3.1/name/${nombrePais}`);
+      const pais = response.data[0];
+      setPaisSeleccionado({
+        name: pais.name.common,
+        capital: pais.capital ? pais.capital[0] : 'Desconocida',
+        population: pais.population,
+        region: pais.region,
+      });
+    } catch (error) {
+      console.error("Error al obtener información del país:", error);
+      setPaisSeleccionado(null);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
-    
     <div className="App">
         <header class="header">
           <h1>World Map</h1>
