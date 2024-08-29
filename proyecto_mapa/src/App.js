@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Tooltip } from 'react-tooltip'; 
-import axios from 'axios';
 
 import {ComposableMap, Geographies, Geography, Marker, Annotation, ZoomableGroup } from "react-simple-maps";
-//import 'react-tooltip/dist/react-tooltip.css'
+import axios from 'axios';
+import 'react-tooltip/dist/react-tooltip.css'
 
 const marcadores = [
   {
@@ -16,30 +16,50 @@ const marcadores = [
 
 function App() {
   const [contenido, setcontenido] = useState("");
-  const [paisSeleccionado, setPaisSeleccionado] = useState(null);
-  const [loading, setLoading] = useState(false); 
-  const obtenerInformacionPais = async (nombrePais) => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`https://restcountries.com/v3.1/name/${nombrePais}`);
-      const pais = response.data[0];
-      setPaisSeleccionado({
-        name: pais.name.common,
-        capital: pais.capital ? pais.capital[0] : 'Desconocida',
-        population: pais.population,
-        region: pais.region,
-      });
-    } catch (error) {
-      console.error("Error al obtener información del país:", error);
-      setPaisSeleccionado(null);
-    } finally {
-      setLoading(false);
+  const [paisSeleccionado, setPaisSeleccionado] = React.useState(null);
+  const [datosPais, setDatosPais] = useState(null);
+
+
+  /*const url = 'https://restcountries.com/v3.1/capital/{capital}';
+  React.useEffect(() => {
+    axios.get(url).then((response) => {
+      paisSeleccionado(response.data);
+    })
+  });*/
+
+  useEffect(() => {
+    if (paisSeleccionado && paisSeleccionado.name) {
+      const url = `https://restcountries.com/v3.1/all`;
+      
+      axios.get(url)
+        .then((response) => {
+          const countryData = response.data[0]; 
+          setDatosPais({
+            name: countryData.name.common,
+            capital: countryData.capital[0],
+            population: countryData.population,
+            region: countryData.region,
+          });
+        })
+        .catch(error => {
+          window.alert(`No se han encontrado datos del pais: ${paisSeleccionado}`);
+        });
     }
+  }, [paisSeleccionado]);
+  
+  const clickPais = (geo) => {
+    const { name, CAPITAL } = geo.properties;
+    setPaisSeleccionado({
+      name: name,
+      capital: CAPITAL || 'Sin datos',
+    });
   };
+  
   return (
+    
     <div className="App">
         <header class="header">
-          <h1>World Map</h1>
+          <h1>Mapa del mundo</h1>
         </header>
       <Tooltip id='country-tooltip'/>
       <div className="section">
@@ -47,17 +67,18 @@ function App() {
           <h1>Información del pais</h1>
           <hr></hr>
           <div className="container">
-          {paisSeleccionado ? (
+            {datosPais ? (
               <div>
-                <h2>{paisSeleccionado.name}</h2>
-                <p>Capital: {paisSeleccionado.capital}</p>
-                <p>Población: {paisSeleccionado.population}</p>
-                <p>Región: {paisSeleccionado.region}</p>
+                <h2>{datosPais.name}</h2>
+                <p>Capital: {datosPais.capital}</p>
+                <p>Población: {datosPais.population}</p>
+                <p>Región: {datosPais.region}</p>
               </div>
             ) : (
               <p>Haz clic en un país para ver más información.</p>
             )}
           </div>
+
         </div>
         <div className="marco">
         <ComposableMap className="map" data-tip="">
@@ -65,13 +86,13 @@ function App() {
             <Geographies geography="/features.json">
               {({ geographies }) =>
                   geographies.map((geo) => (
-                    <Geography key={geo.rsmKey} geography={geo}
+                    <Geography className= "geography" key={geo.rsmKey} geography={geo}
                     data-tooltip-id="country-tooltip"
                     data-tooltip-content={geo.properties.name}
                     onClick={() => {
-                      const { NAME, CAPITAL, POP_EST, REGION_UN } = geo.properties;
+                      const { name, CAPITAL, POP_EST, REGION_UN } = geo.properties;
                       setPaisSeleccionado({
-                        name: NAME,
+                        name: name,
                         capital: CAPITAL || 'Sin datos',
                         population: POP_EST,
                         region: REGION_UN,
@@ -79,8 +100,8 @@ function App() {
                     }}
                      
                     onMouseEnter={() => {
-                      const{NAME} = geo.properties;
-                      setcontenido(`${NAME}`);
+                      const{name} = geo.properties;
+                      setcontenido(`${name}`);
                     }}
                     onMouseLeave={() => {setcontenido("");}}
                     style={{
@@ -96,7 +117,7 @@ function App() {
                     <Marker key ={name} coordinates={coordinates} >
                       <circle r={3} fill='#F00' stroke='#fff' strokeWidth={1}/>
                       <text textAnchor='middle' y={markerOffset} style={{fontFamily: "system-ui", fill: "#06a7fe"}}>
-                        {name}
+                        
                       </text>
                     </Marker>
                   ))}
@@ -107,7 +128,7 @@ function App() {
         </div> 
       </div>
       <div className="texto">
-          <p>Gracias por visitar este proyecto realizado con ReactJS, si quieres ver otros proyectos en los que he participado haz click en el botón de abajo.</p>
+          <p>Gracias por visitar este proyecto realizado con ReactJS, si quieres ver otros proyectos en los que he participado haz click abajo.</p>
           <a href="https://github.com/iToxicD">Saber más</a>
       </div>
     </div>
