@@ -6,6 +6,7 @@ import {ComposableMap, Geographies, Geography, Marker, Annotation, ZoomableGroup
 import axios from 'axios';
 import 'react-tooltip/dist/react-tooltip.css'
 
+//Marcador de España en el mapa
 const marcadores = [
   {
     markerOffset: -15,
@@ -15,25 +16,25 @@ const marcadores = [
 ];
 
 function App() {
+  // Almacena el contenido del tooltip
   const [contenido, setcontenido] = useState("");
+  // Define el estado del pais seleccionado
   const [paisSeleccionado, setPaisSeleccionado] = React.useState(null);
+  // Define el estado para guardar los datos del pais seleccionado
   const [datosPais, setDatosPais] = useState(null);
 
-
-  /*const url = 'https://restcountries.com/v3.1/capital/{capital}';
-  React.useEffect(() => {
-    axios.get(url).then((response) => {
-      paisSeleccionado(response.data);
-    })
-  });*/
-
   useEffect(() => {
+    // Comprueba si hay un pais seleccionado y que tenga nombre
     if (paisSeleccionado && paisSeleccionado.name) {
+      // URL para la API
       const url = `https://restcountries.com/v3.1/name/${paisSeleccionado.name}`;
       
+      // Hace la solicitud a la API para obtener la información del pais
       axios.get(url)
         .then((response) => {
-          const countryData = response.data[0]; 
+          // Obtiene los datos
+          const countryData = response.data[0];
+          // Actualiza con los datos del pais 
           setDatosPais({
             name: countryData.name.common,
             capital: countryData.capital[0],
@@ -42,11 +43,18 @@ function App() {
           });
         })
         .catch(error => {
+          /* En caso de que no haya datos de un pais mostrara una alerta indicando que no hay datos.
+          Por motivos desconocidos, en la API hay algunos paises que no tienen datos o son incorrectos.*/
           window.alert(`No se han encontrado datos del pais: ${paisSeleccionado.name}`);
         });
     }
-  }, [paisSeleccionado]);
+  }, 
+  // El useEffect se ejcutara cada vez que se cambie de pais
+  [paisSeleccionado]);
   
+  /*Con esta constante se maneja el click que se hace en cada pais,
+  actualizando el nombre y capital del mismo.
+  */
   const clickPais = (geo) => {
     const { name, CAPITAL } = geo.properties;
     setPaisSeleccionado({
@@ -68,6 +76,8 @@ function App() {
           
           <hr></hr>
           <div className="container">
+            /* Muestra información del pais o 
+            si no hay ningun seleccionado muestra un mensaje por defecto*/
             {datosPais ? (
               <div>
                 <h2>{datosPais.name}</h2>
@@ -92,6 +102,7 @@ function App() {
                     data-tooltip-content={geo.properties.name}
                     onClick={() => {
                       const { name, CAPITAL, POP_EST, REGION_UN } = geo.properties;
+                      // Actualiza el estado con la información del pais clicado
                       setPaisSeleccionado({
                         name: name,
                         capital: CAPITAL || 'Sin datos',
@@ -102,6 +113,7 @@ function App() {
                      
                     onMouseEnter={() => {
                       const{name} = geo.properties;
+                      // Actualiza la información del pais 
                       setcontenido(`${name}`);
                     }}
                     onMouseLeave={() => {setcontenido("");}}
@@ -113,12 +125,13 @@ function App() {
                     }}/>
                   ))
                 }
-            </Geographies>     
+            </Geographies>
+                  // Muestra los marcadores en el mapa
                   {marcadores.map(({ name, coordinates, markerOffset}) => (
                     <Marker key ={name} coordinates={coordinates} >
                       <circle r={3} fill='#F00' stroke='#fff' strokeWidth={1}/>
                       <text textAnchor='middle' y={markerOffset} style={{fontFamily: "system-ui", fill: "#06a7fe"}}>
-                        
+                        // Si se desea colocar el nombre encima del marcador solo se tendria que añadir "name" con dos llaves a cada lado
                       </text>
                     </Marker>
                   ))}
