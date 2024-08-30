@@ -29,7 +29,7 @@ function App() {
 
   useEffect(() => {
     if (paisSeleccionado && paisSeleccionado.name) {
-      const url = `https://restcountries.com/v3.1/all`;
+      const url = `https://restcountries.com/v3.1/name/${paisSeleccionado.name}`;
       
       axios.get(url)
         .then((response) => {
