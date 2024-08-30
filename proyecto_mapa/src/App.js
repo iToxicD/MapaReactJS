@@ -42,7 +42,7 @@ function App() {
           });
         })
         .catch(error => {
-          window.alert(`No se han encontrado datos del pais: ${paisSeleccionado}`);
+          window.alert(`No se han encontrado datos del pais: ${paisSeleccionado.name}`);
         });
     }
   }, [paisSeleccionado]);
@@ -65,6 +65,7 @@ function App() {
       <div className="section">
         <div className="card">
           <h1>Información del pais</h1>
+          
           <hr></hr>
           <div className="container">
             {datosPais ? (
